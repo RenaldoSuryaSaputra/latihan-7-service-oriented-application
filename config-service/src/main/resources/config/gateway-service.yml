@@ -1,0 +1,47 @@
+server:
+  port: 8083
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8082/eureka/
+
+spring:
+  output:
+    ansi:
+      enabled: always
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enable: true
+      routes:
+        - id: customer-service
+          uri: lb://customer-service
+          predicates:
+            - Path=/customer/**
+          filters:
+            - RewritePath=/customer/(?<path>.*), /$\{path}
+        - id: notification-service
+          uri: lb://notification-service
+          predicates:
+            - Path=/notification/**
+          filters:
+            - RewritePath=/notification/(?<path>.*), /$\{path}
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/product/**
+          filters:
+            - RewritePath=/product/(?<path>.*), /$\{path}
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+          filters:
+            - RewritePath=/order/(?<path>.*), /$\{path}
+springdoc:
+  swagger-ui:
+    urls:
+      - name: customer
+        url: /v3/api-docs/customer
